@@ -1,4 +1,4 @@
-# Astro Syntax Highlight for Sublime Text Editor
+# Astro Syntax Highlighting for Sublime Text Editor
 
 ## Install
 
