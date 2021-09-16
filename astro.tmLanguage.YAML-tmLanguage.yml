@@ -1,0 +1,398 @@
+# [PackageDev] target_format: plist, ext: tmLanguage
+name: Astro
+scopeName: text.html.astro
+fileTypes:
+- astro
+
+patterns:
+- include: '#astro-markdown'
+
+- include: '#astro-expressions'
+
+- name: meta.tag.any.html
+  begin: (<)([a-zA-Z0-9:-]++)(?=[^>]*></\2>)
+  beginCaptures:
+    '1': {name: punctuation.definition.tag.begin.html}
+    '2': {name: entity.name.tag.html}
+  end: (>)(<)(/)(\2)(>)
+  endCaptures:
+    '1': {name: punctuation.definition.tag.end.html}
+    '2': {name: punctuation.definition.tag.begin.html meta.scope.between-tag-pair.html}
+    '3': {name: punctuation.definition.tag.begin.html}
+    '4': {name: entity.name.tag.html}
+    '5': {name: punctuation.definition.tag.end.html}
+  patterns:
+  - include: '#tag-stuff'
+
+- name: meta.tag.preprocessor.xml.html
+  begin: (<\?)(xml)
+  end: (\?>)
+  captures:
+    '1': {name: punctuation.definition.tag.html}
+    '2': {name: entity.name.tag.xml.html}
+  patterns:
+  - include: '#tag-generic-attribute'
+  - include: '#string-double-quoted'
+  - include: '#string-single-quoted'
+
+- name: comment.block.html
+  begin: <!--
+  end: --\s*>
+  captures:
+    '0': {name: punctuation.definition.comment.html}
+  patterns:
+  - name: invalid.illegal.bad-comments-or-CDATA.html
+    match: --
+
+- name: meta.tag.sgml.html
+  begin: <!
+  end: '>'
+  captures:
+    '0': {name: punctuation.definition.tag.html}
+  patterns:
+  - name: meta.tag.sgml.doctype.html
+    begin: (?i:DOCTYPE|doctype)
+    end: (?=>)
+    captures:
+      '1': {name: entity.name.tag.doctype.html}
+    patterns:
+    - name: string.quoted.double.doctype.identifiers-and-DTDs.html
+      match: '"[^">]*"'
+  - name: constant.other.inline-data.html
+    begin: \[CDATA\[
+    end: ']](?=>)'
+  - name: invalid.illegal.bad-comments-or-CDATA.html
+    match: (\s*)(?!--|>)\S(\s*)
+
+- name: source.css.embedded.html
+  begin: (?:^\s+)?(<)((?i:style))\b(?=[^>]*lang=(['"])css\1?)
+  end: (</)((?i:style))(>)(?:\s*\n)?
+  captures:
+    '1': {name: punctuation.definition.tag.begin.html}
+    '2': {name: entity.name.tag.style.html}
+    '3': {name: punctuation.definition.tag.html}
+  patterns:
+  - include: '#tag-stuff'
+  - begin: (>)
+    beginCaptures:
+      '1': {name: punctuation.definition.tag.end.html}
+    end: (?=</(?i:style))
+    patterns:
+    - include: source.css
+
+- name: source.sass.embedded.html
+  begin: (?:^\s+)?(<)((?i:style))\b(?=[^>]*lang=(['"])sass\1?)
+  end: (</)((?i:style))(>)(?:\s*\n)?
+  captures:
+    '1': {name: punctuation.definition.tag.begin.html}
+    '2': {name: entity.name.tag.style.html}
+    '3': {name: punctuation.definition.tag.html}
+  patterns:
+  - include: '#tag-stuff'
+  - begin: (>)
+    beginCaptures:
+      '1': {name: punctuation.definition.tag.end.html}
+    end: (?=</(?i:style))
+    patterns:
+    - include: source.sass
+
+- name: source.scss.embedded.html
+  begin: (?:^\s+)?(<)((?i:style))\b(?=[^>]*lang=(['"])scss\1?)
+  end: (</)((?i:style))(>)(?:\s*\n)?
+  captures:
+    '1': {name: punctuation.definition.tag.begin.html}
+    '2': {name: entity.name.tag.style.html}
+    '3': {name: punctuation.definition.tag.html}
+  patterns:
+  - include: '#tag-stuff'
+  - begin: (>)
+    beginCaptures:
+      '1': {name: punctuation.definition.tag.end.html}
+    end: (?=</(?i:style))
+    patterns:
+    - include: source.css.scss
+
+- name: source.css.embedded.html
+  begin: (?:^\s+)?(<)((?i:style))\b(?![^>]*/>)
+  end: (</)((?i:style))(>)(?:\s*\n)?
+  captures:
+    '1': {name: punctuation.definition.tag.begin.html}
+    '2': {name: entity.name.tag.style.html}
+    '3': {name: punctuation.definition.tag.html}
+  patterns:
+  - include: '#tag-stuff'
+  - begin: (>)
+    beginCaptures:
+      '1': {name: punctuation.definition.tag.end.html}
+    end: (?=</(?i:style))
+    patterns:
+    - include: source.css
+      __DEFAULT_STYLE_INCLUDE_END__: null
+      __DEFAULT_STYLE_INCLUDE_START__: null
+  __DEFAULT_STYLE_NAME_END__: null
+  __DEFAULT_STYLE_NAME_START__: null
+
+- name: source.tsx.embedded.html
+  begin: (?:^\s+)?(<)((?i:script))\b(?=[^>]*lang=(['"])tsx\1?)
+  beginCaptures:
+    '1': {name: punctuation.definition.tag.begin.html}
+    '2': {name: entity.name.tag.script.html}
+  end: (?<=</(script|SCRIPT))(>)(?:\s*\n)?
+  endCaptures:
+    '2': {name: punctuation.definition.tag.html}
+  patterns:
+  - include: '#tag-stuff'
+  - begin: (?<!</(?:script|SCRIPT))(>)
+    end: (</)((?i:script))
+    captures:
+      '1': {name: punctuation.definition.tag.begin.html}
+      '2': {name: entity.name.tag.script.html}
+    patterns:
+    - include: source.tsx
+
+- name: source.tsx.embedded.html
+  begin: (?:^\s+)?(<)((?i:script))\b(?=[^>]*lang=(['"])ts\1?)
+  beginCaptures:
+    '1': {name: punctuation.definition.tag.begin.html}
+    '2': {name: entity.name.tag.script.html}
+  end: (?<=</(script|SCRIPT))(>)(?:\s*\n)?
+  endCaptures:
+    '2': {name: punctuation.definition.tag.html}
+  patterns:
+  - include: '#tag-stuff'
+  - begin: (?<!</(?:script|SCRIPT))(>)
+    captures:
+      '1': {name: punctuation.definition.tag.begin.html}
+      '2': {name: entity.name.tag.script.html}
+    end: (</)((?i:script))
+    patterns:
+    - include: source.tsx
+
+- name: source.tsx.embedded.html
+  begin: (<)((?i:script))\b(?![^>]*/>)(?![^>]*(?i:type.?=.?text/((?!javascript|babel|ecmascript).*)))
+  beginCaptures:
+    '1': {name: punctuation.definition.tag.begin.html}
+    '2': {name: entity.name.tag.script.html}
+  end: (?<=</(script|SCRIPT))(>)(?:\s*\n)?
+  endCaptures:
+    '2': {name: punctuation.definition.tag.html}
+  patterns:
+  - include: '#tag-stuff'
+  - begin: (?<!</(?:script|SCRIPT))(>)
+    end: (</)((?i:script))
+    captures:
+      '1': {name: punctuation.definition.tag.begin.html}
+      '2': {name: entity.name.tag.script.html}
+    patterns:
+    - name: comment.line.double-slash.js
+      match: (//).*?((?=</script)|$\n?)
+      captures:
+        '1': {name: punctuation.definition.comment.js}
+    - name: comment.block.js
+      begin: /\*
+      end: \*/|(?=</script)
+      captures:
+        '0': {name: punctuation.definition.comment.js}
+    - include: source.tsx
+
+- name: meta.tag.structure.any.html
+  begin: (</?)((?i:body|head|html)\b)
+  end: (>)
+  endCaptures:
+    '1': {name: punctuation.definition.tag.end.html}
+  captures:
+    '1': {name: punctuation.definition.tag.begin.html}
+    '2': {name: entity.name.tag.structure.any.html}
+  patterns:
+  - include: '#tag-stuff'
+
+- name: meta.tag.block.any.html
+  begin: (</?)((?i:address|blockquote|dd|div|dl|dt|fieldset|form|frame|frameset|h1|h2|h3|h4|h5|h6|iframe|noframes|object|ol|p|ul|applet|center|dir|hr|menu|pre)\b)
+  beginCaptures:
+    '1': {name: punctuation.definition.tag.begin.html}
+    '2': {name: entity.name.tag.block.any.html}
+  end: (>)
+  endCaptures:
+    '1': {name: punctuation.definition.tag.end.html}
+  patterns:
+  - include: '#tag-stuff'
+
+- name: meta.tag.inline.any.html
+  begin: (</?)((?i:a|abbr|acronym|area|b|base|basefont|bdo|big|br|button|caption|cite|code|col|colgroup|del|dfn|em|font|head|html|i|img|input|ins|isindex|kbd|label|legend|li|link|map|meta|noscript|optgroup|option|param|q|s|samp|script|select|small|span|strike|strong|style|sub|sup|table|tbody|td|textarea|tfoot|th|thead|title|tr|tt|u|var)\b)
+  beginCaptures:
+    '1': {name: punctuation.definition.tag.begin.html}
+    '2': {name: entity.name.tag.inline.any.html}
+  end: '((?: ?/)?>)'
+  endCaptures:
+    '1': {name: punctuation.definition.tag.end.html}
+  patterns:
+  - include: '#tag-stuff'
+
+- name: meta.tag.component.astro
+  begin: (</?)([A-Z][a-zA-Z0-9-\.]*|[a-z]+\.[a-zA-Z0-9-]+)(\:(load|idle|visible))?
+  beginCaptures:
+    '1': {name: punctuation.definition.tag.begin.html}
+    '2': {name: entity.name.tag.component.astro}
+    '3': {name: keyword.control.loading.astro}
+  end: (/?>)
+  endCaptures:
+    '1': {name: punctuation.definition.tag.end.html}
+  patterns:
+  - include: '#tag-stuff'
+
+- name: meta.tag.other.html
+  begin: (</?)([a-zA-Z0-9:-]+)
+  beginCaptures:
+    '1': {name: punctuation.definition.tag.begin.html}
+    '2': {name: entity.name.tag.other.html}
+  end: (/?>)
+  endCaptures:
+    '1': {name: punctuation.definition.tag.end.html}
+  patterns:
+  - include: '#tag-stuff'
+
+- include: '#entities'
+
+- include: '#frontmatter'
+
+- name: invalid.illegal.incomplete.html
+  match: <>
+
+- name: invalid.illegal.bad-angle-bracket.html
+  match: <
+
+repository:
+  astro-expressions:
+    patterns:
+    - name: expression.embbeded.astro
+      begin: \{
+      beginCaptures:
+        '0': {name: punctuation.definition.generic.begin.html}
+      end: \}
+      endCaptures:
+        '0': {name: punctuation.definition.generic.end.html}
+      patterns:
+      - include: source.tsx
+
+  astro-markdown:
+    name: text.html.astro.markdown
+    begin: (<)(Markdown)(>)
+    beginCaptures:
+      '1': {name: punctuation.definition.tag.begin.html}
+      '2': {name: entity.name.tag.html}
+      '3': {name: punctuation.definition.tag.end.html}
+    end: (</)(Markdown)(>)
+    endCaptures:
+      '1': {name: punctuation.definition.tag.begin.html}
+      '2': {name: entity.name.tag.html}
+      '3': {name: punctuation.definition.tag.end.html}
+    patterns:
+    - include: text.html.markdown.astro
+
+  entities:
+    patterns:
+    - name: constant.character.entity.html
+      match: (&)([a-zA-Z0-9]+|#[0-9]+|#x[0-9a-fA-F]+)(;)
+      captures:
+        '1': {name: punctuation.definition.entity.html}
+        '3': {name: punctuation.definition.entity.html}
+    - name: invalid.illegal.bad-ampersand.html
+      match: '&'
+
+  frontmatter:
+    contentName: meta.embedded.block.frontmatter
+    begin: \A(-{3})\s*$
+    beginCaptures:
+      '1': {name: comment.block.html}
+    end: (^|\G)(-{3})|\.{3}\s*$
+    endCaptures:
+      '2': {name: comment.block.html}
+    patterns:
+    - include: source.tsx
+
+  string-double-quoted:
+    name: string.quoted.double.html
+    begin: '"'
+    beginCaptures:
+      '0': {name: punctuation.definition.string.begin.html}
+    end: '"'
+    endCaptures:
+      '0': {name: punctuation.definition.string.end.html}
+    patterns:
+    - include: '#entities'
+
+  string-single-quoted:
+    name: string.quoted.single.html
+    begin: ''''
+    beginCaptures:
+      '0': {name: punctuation.definition.string.begin.html}
+    end: ''''
+    endCaptures:
+      '0': {name: punctuation.definition.string.end.html}
+    patterns:
+    - include: '#entities'
+
+  tag-generic-attribute:
+    name: entity.other.attribute-name.html
+    match: \b([a-zA-Z\-:]+)
+
+  tag-id-attribute:
+    name: meta.attribute-with-value.id.html
+    begin: \b(id)\b\s*(=)
+    end: (?<='|")
+    captures:
+      '1': {name: entity.other.attribute-name.id.html}
+      '2': {name: punctuation.separator.key-value.html}
+    patterns:
+    - name: string.quoted.double.html
+      contentName: meta.toc-list.id.html
+      begin: '"'
+      beginCaptures:
+        '0': {name: punctuation.definition.string.begin.html}
+      end: '"'
+      endCaptures:
+        '0': {name: punctuation.definition.string.end.html}
+      patterns:
+      - include: '#astro-expressions'
+      - include: '#entities'
+    - name: string.quoted.single.html
+      contentName: meta.toc-list.id.html
+      begin: ''''
+      beginCaptures:
+        '0': {name: punctuation.definition.string.begin.html}
+      end: ''''
+      endCaptures:
+        '0': {name: punctuation.definition.string.end.html}
+      patterns:
+      - include: '#astro-expressions'
+      - include: '#entities'
+
+  tag-stuff:
+    patterns:
+    - include: '#tag-id-attribute'
+    - include: '#tag-generic-attribute'
+    - include: '#string-double-quoted'
+    - include: '#string-single-quoted'
+    - include: '#astro-load-directive'
+    - include: '#astro-expressions'
+    - include: '#astro-markdown'
+$schema: https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json
+foldingStartMarker: |-
+  (?x)
+  (<(?i:head|body|table|thead|tbody|tfoot|tr|div|select|fieldset|style|script|ul|ol|li|form|dl)\b.*?>
+  |<!--(?!.*--\s*>)
+  |^<!--\ \#tminclude\ (?>.*?-->)$
+  |<\?(?:php)?.*\b(if|for(each)?|while)\b.+:
+  |\{\{?(if|foreach|capture|literal|foreach|php|section|strip)
+  |\{\s*($|\?>\s*$|//|/\*(.*\*/\s*$|(?!.*?\*/)))
+  )
+foldingStopMarker: |-
+  (?x)
+  (</(?i:head|body|table|thead|tbody|tfoot|tr|div|select|fieldset|style|script|ul|ol|li|form|dl)>
+  |^(?!.*?<!--).*?--\s*>
+  |^<!--\ end\ tminclude\ -->$
+  |<\?(?:php)?.*\bend(if|for(each)?|while)\b
+  |\{\{?/(if|foreach|capture|literal|foreach|php|section|strip)
+  |^[^{]*\}
+  )
+keyEquivalent: ^~H
