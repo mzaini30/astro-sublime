@@ -1,7 +1,5 @@
 # Astro Syntax Highlight for Sublime Text Editor
 
-_WIP_
-
 ## Install
 
 1. Install package `Svelte`.
