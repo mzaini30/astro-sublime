@@ -14,7 +14,21 @@ contexts:
       push: Packages/JavaScript/JavaScript.sublime-syntax
       with_prototype:
         - match: "---"
-          push: Packages/HTML/HTML.sublime-syntax
+          push: html
 
     - match: ""
-      push: Packages/HTML/HTML.sublime-syntax
+      push: html
+
+  html:
+    - match: ""
+      push: Packages/Svelte/Svelte.sublime-syntax
+  #     with_prototype:
+  #       - match: "={"
+  #         push: expression
+
+  # expression:
+  #   - match: ""
+  #     push: Packages/JavaScript/JavaScript.sublime-syntax
+  #     with_prototype:
+  #       - match: "}"
+  #         push: html

@@ -4,8 +4,5 @@ _WIP_
 
 ## Install
 
-Copy `Astro.sublime-syntax` to `~/.config/sublime-text-3/Packages/User/`.
-
-## TODO
-
-- [ ] Astro Expression (like `href={...}`)
+1. Install package `Svelte`.
+2. Copy `Astro.sublime-syntax` to `~/.config/sublime-text-3/Packages/User/`.
